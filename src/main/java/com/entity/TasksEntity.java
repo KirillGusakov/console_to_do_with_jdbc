@@ -15,6 +15,12 @@ public class TasksEntity {
         this.categories = categories;
     }
 
+    public TasksEntity(String taskName, LocalDate dueDate, CategoriesEntity categories) {
+        this(0, taskName, dueDate, categories);
+    }
+
+    public TasksEntity() {}
+
     public int getTaskId() {
         return taskId;
     }
@@ -49,8 +55,7 @@ public class TasksEntity {
 
     @Override
     public String toString() {
-        return "TasksEntity{" +
-               "taskId=" + taskId +
+        return "taskId=" + taskId +
                ", taskName='" + taskName + '\'' +
                ", dueDate=" + dueDate +
                ", categories=" + categories +

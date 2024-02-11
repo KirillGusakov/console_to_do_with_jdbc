@@ -8,17 +8,20 @@ import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Optional;
+import java.util.*;
 
 public final class TasksDao {
 
     private static final TasksDao INSTANCE = new TasksDao();
-    private static final String SELECT_SQL = """
-            SELECT task_id,
+
+    private static final String SAVE_ALL_SQL = """
+        SELECT task_id,
                     task_name,
                     due_date,
                     category_id
-            FROM to_do_repository.to_do_app.tasks
+        FROM to_do_repository.to_do_app.tasks
+    """;
+    private static final String SELECT_SQL = SAVE_ALL_SQL + """
             WHERE task_id = ?;
             """;
 
@@ -40,6 +43,31 @@ public final class TasksDao {
             DELETE FROM to_do_repository.to_do_app.tasks
             WHERE task_id = ?
             """;
+
+
+
+    public List<TasksEntity> getAllTasks() {
+        try (var connection = ConnectionManager.open();
+             var prepareStatement = connection.prepareStatement(SAVE_ALL_SQL)) {
+            ResultSet resultSet = prepareStatement.executeQuery();
+
+            List<TasksEntity> tasksList = new ArrayList<>();
+
+            while (resultSet.next()) {
+                TasksEntity taskEntity = new TasksEntity(
+                        resultSet.getInt("task_id"),
+                        resultSet.getString("task_name"),
+                        resultSet.getDate("due_date").toLocalDate(),
+                        CategoriesDao.save(resultSet.getInt("category_id")).orElse(null));
+
+                tasksList.add(taskEntity);
+            }
+
+            return tasksList;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     public boolean delete(int id) {
         try (var connection = ConnectionManager.open();
