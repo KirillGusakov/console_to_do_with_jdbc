@@ -1,14 +1,12 @@
-import com.util.ConnectionManager;
+import com.dao.TasksDao;
+import com.entity.TasksEntity;
 
-import java.sql.Connection;
-import java.sql.SQLException;
+import javax.swing.text.html.parser.Entity;
 
 public class ToDoRunner {
     public static void main(String[] args) {
-        try (Connection open = ConnectionManager.open()) {
-            open.getAutoCommit();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+
     }
+
+
 }
